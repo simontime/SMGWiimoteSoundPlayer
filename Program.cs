@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace SMGWiimoteSoundPlayer
@@ -30,7 +30,7 @@ namespace SMGWiimoteSoundPlayer
             Console.WriteLine("Read sounds from CSW...");
 
             PrintNames:
-            Console.WriteLine("\nArguments: 1-{0}, print, exit\n", Parsers.Sounds.Length);
+            Console.WriteLine("\nArguments: 1-{0}, dump, print, exit\n", Parsers.Sounds.Length);
 
             for (int i = 0; i < Parsers.SoundNames.Length; i++)
                 Console.WriteLine("{0}:\t{1}", i + 1, Parsers.SoundNames[i]);
@@ -42,6 +42,20 @@ namespace SMGWiimoteSoundPlayer
                 Console.Write("Input: ");
 
                 var soundname = Console.ReadLine();
+
+                if (soundname == "dump")
+                {
+                    Console.WriteLine("Dumping sounds to WAV...");
+
+                    for (int i = 0; i < Parsers.Sounds.Length; i++)
+                    {
+                        using (var file = File.OpenWrite($"{Parsers.SoundNames[i]}.WAV"))
+                        using (var sound = Sound.MakeWaveStreamFromPCMData(Parsers.Sounds[i]))
+                            sound.CopyTo(file);
+                    }
+
+                    Console.WriteLine("Done!");
+                }
 
                 if (soundname == "print")
                     goto PrintNames;
